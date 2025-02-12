@@ -82,6 +82,7 @@ class Client(object):
             'definitions': 'definitions',
             'extensions': 'extensions',
             'cluster-name': 'cluster-name',
+            'consumers': 'consumers'
             }
 
     json_headers = {"content-type": "application/json"}
@@ -904,13 +905,22 @@ class Client(object):
         return bindings
 
     def get_bindings_from_exchange(self, vhost, exch):
-        pass
+        vhost = quote(vhost, '')
+        exch = quote(exch, '')
+        path = Client.urls['bindings_by_source_exch'] % (vhost, exch)
+        bindings = self._call(path, 'GET')
+        return bindings
 
     def get_bindings_to_exchange(self, vhost, exch):
-        pass
+        vhost = quote(vhost, '')
+        exch = quote(exch, '')
+        path = Client.urls['bindings_by_dest_exch'] % (vhost, exch)
+        bindings = self._call(path, 'GET')
+        return bindings
+        raise NotImplementedError
 
     def get_bindings_between_exch_and_queue(self, vhost, exch, queue):
-        pass
+        raise NotImplementedError
 
     def create_binding(self, vhost, exchange, queue, rt_key=None, args=None):
         """
@@ -1048,4 +1058,11 @@ class Client(object):
         Name identifying this RabbitMQ cluster.
         """
         path = Client.urls['cluster-name']
+        return self._call(path, 'GET')
+
+    def get_consumers(self):
+        """
+        Get A list of all consumers.
+        """
+        path= Client.urls['consumers']
         return self._call(path, 'GET')
